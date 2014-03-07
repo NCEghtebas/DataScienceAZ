@@ -1,0 +1,3 @@
+[submodule "DataScience"]
+	path = DataScience
+	url = git@github.com:AllenDowney/DataScience.git
