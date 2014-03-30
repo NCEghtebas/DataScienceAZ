@@ -10,6 +10,7 @@ conn = None
 def connect(dsn):
     global conn
     conn = psycopg2.connect(dsn)
+    return conn
 
 def columns_to_str(columns):
     if not columns:
