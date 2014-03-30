@@ -27,14 +27,12 @@ def gendataSIR(s, i, r, gamma, beta):
     # total poopulation in system
     n = float(s+i+r)
 
-    sList = []
-    iList = []
-    rList = []
+    res = []
 
     while i > 0:
         newI = 0
 
-        # there is a single random trial for each susceptible individual
+        # this is a single random trial for each susceptible individual
         for _ in xrange(s):
             # frequency dependent
             if random.random() < beta*(i/n):
@@ -55,8 +53,6 @@ def gendataSIR(s, i, r, gamma, beta):
         r += recoverI
 
         # add values at this timestep
-        sList.append(s)
-        iList.append(i)
-        rList.append(r)
+        res.append((s, i, r))
 
-    return iList
+    return res
