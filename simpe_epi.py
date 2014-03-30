@@ -32,17 +32,11 @@ def gendataSIR(s, i, r, gamma, beta):
     R = r
 
     # total poopulation in system
-    N = S+I+R
-
-    N = float(N)
-    # time
-    t = 0
+    N = float(S+I+R)
 
     sList = []
     iList = []
     rList = []
-    # number of newly infected people on each step
-    newIList = []
 
     while I > 0:
         newI = 0
@@ -71,8 +65,5 @@ def gendataSIR(s, i, r, gamma, beta):
         sList.append(S)
         iList.append(I)
         rList.append(R)
-        newIList.append(newI)
-
-        t += 1
 
     return iList
