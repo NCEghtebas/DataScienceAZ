@@ -12,29 +12,30 @@ October 8, 2009
 
 import random 
 import pylab as pl
- 
-#generate data 
-#takes n, alpha, and beta
-def gendata():
+
+'''
+Generates randomized data based on a Simple SIR Model.
+
+Inputs: Takes the susceptible, infected, and recovered populations
+        Takes the infection rate or likeliness to go from S to I
+        Takes the recovery rate or likeliness to go from I to R
+
+Returns: Array of the number of infected at each time step 
+'''
+def gendataSIR(s, i, r, gamma, beta):
     #number of susceptibles
-    S = 1000 
+    S = s
     #seeding the outbreak with one infectious individual
-    I = 1 
+    I = i
     #number of recovered
-    R = 0 
+    R = r 
      
     #total poopulation in system 
     N = S+I+R
-     
+    
     N = float(N)
     #time
     t = 0
-        
-    #Infectivity (probability of generating a new case at each step)
-    b = .09
-     
-    #Probability of recovering @ each step
-    g = .05
       
     sList = []
     iList = []
@@ -47,65 +48,30 @@ def gendata():
         
         #there is a single random trial for each susceptible individual
         for i in range(S):
-            #here, we're using a frequency dependent transmission process;
-            #density dependence would be b*I
-            
-            #we use the method 'random.random()' to draw uniformly distributed numbers
-            #in the range [0,1).
-            if random.random() < b*(I/N):
+            #frequency dependent
+            if random.random() < beta*(I/N):
                 newI += 1
             
-            #to switch to density dependence, comment out the block above and
-            #uncomment the following:
+            #Density dependent
             # if random.random() < b*I:
             #    newI += 1
         
-        #Now we're going to see how many individuals recovery on this step.    
         recoverI = 0
         for i in range(I):
-            if random.random() < g:
+            if random.random() < gamma:
                 recoverI += 1
         
-        #Then, we wait to the all of the final accounting at the end of the step.
-        #This is because we're making the assumption that all events on a step
-        #happen simultaneously, so that individuals are infected on this step 
-        #at the same time as others recover.
-        
+        #Update values        
         S -= newI
         I += (newI - recoverI)
         R += recoverI
         
-        #Then we add these values to their respective lists
+        #add values at this timestep
         sList.append(S)
         iList.append(I)
         rList.append(R)
         newIList.append(newI)
         
-        #print('t', t)
         t += 1
 
-    # print('sList', sList)
-    # print('iList', iList)
-    # print('rList', rList)
-    # print('newIList', newIList)
-
     return iList
-
-
-pl.figure()
-x = []
-for i in range(10):
-    while len(x) < 200:
-        x= gendata()
-    pl.plot(x, hold= True)
-    print i, gendata()
-    x = []
-
-# fig = pl.gcf()
-# fig.canvas.set_window_title('Simple SIR Model Number of Infected')
-
-pl.suptitle("Simple SIR Model Number of Infected")
-
-pl.xlabel("Time Steps")
-pl.ylabel("Number of Infected")
-pl.show()
