@@ -1,10 +1,10 @@
 import random 
 import pylab as pl
-from simpe_epi import gendataSIR
+from simple_sir import gendataSIR
+import numpy as np
 
 
 def prepare_figure(title="Simple SIR Model Number of Infected"):
-	pl.figure()
 	pl.suptitle(title)
 	pl.xlabel("Time Steps")
 	pl.ylabel("Number of Infected")
@@ -16,6 +16,14 @@ def sweep(gs, bs):
 			res = gendataSIR(S,I,R, g, b)
 			print 'g:', g, 'b:', b, 'len:', len(res)
 			yield res
+
+
+def sweep_range(start, stop, count):
+	curr = start
+	incr = (stop - start) / count
+	for _ in xrange(count):
+		yield curr
+		curr += incr
 
 #b = .09
 #g = .05
@@ -37,10 +45,16 @@ hgamma= [0.9, 0.8, 0.7, 0.6]
 #likelyness to get cured (or die) is low
 lgamma= [0.01,0.05, 0.1, 0.2]
 
+subplots, (sp, ip, rp) = pl.subplots(3, sharex=True, sharey=True)
 
+
+for sw in sweep(np.logspace(np.log10(0.9), np.log10(0.01), 25), np.logspace(np.log10(0.9), np.log10(0.1), 25)):
+	s, i, r = zip(*sw)
+	sp.plot(s)
+	ip.plot(i)
+	rp.plot(r)
 prepare_figure()
-for s in sweep([0.05], [0.9, 0.5, 0.2, 0.1]):
-	pl.plot(s, hold=True)
+subplots.subplots_adjust(hspace=0)
 pl.show()
 # print "done hbeta"
 # sweep(lbeta)
