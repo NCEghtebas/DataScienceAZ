@@ -10,12 +10,17 @@ def prepare_figure(title="Simple SIR Model Number of Infected"):
     pl.ylabel("Number of Infected")
 
 
-def sweep(s, i, r, gs, bs):
+def sweep_sir(s, i, r, gs, bs):
     for g in gs:
         for b in bs:
             res = gendataSIR(s, i, r, g, b)
             yield (g, b, res)
 
+def sweep_sis(s, i, gs , bs):
+    for g in gs:
+        for b in bs:
+            res = gendataSIS(s, i, g, b)
+            yield (g, b, res)
 
 def sweep_range(start, stop, count):
     return np.logspace(np.log10(start), np.log10(stop), count)
@@ -24,7 +29,7 @@ def sweep_range(start, stop, count):
 def main():
     subplots, (sp, ip, rp) = pl.subplots(3, sharex=True, sharey=True)
     sr = sweep_range(0.99, 0.01, 25)
-    for g, b, sw in sweep(1000, 5, 0, sr, sr):
+    for g, b, sw in sweep_sir(1000, 5, 0, sr, sr):
         print 'g:', g, 'b:', b, 'len:', len(sw)
         s, i, r = zip(*sw)
         sp.plot(s)
