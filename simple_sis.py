@@ -4,6 +4,7 @@ March 25, 2014
 
 based on code from:
 
+
 A simple SIR model written in Python
 Jon Zelner
 University of Michigan
@@ -14,7 +15,7 @@ import random
 import pylab as pl
 
 
-def gendataSIS(s, i, gamma, beta, max_time=2000):
+def gendataSIS(s, i, gamma, beta, max_time=100):
     '''
     Generates randomized data based on a Simple SIR Model.
 
@@ -51,3 +52,13 @@ def gendataSIS(s, i, gamma, beta, max_time=2000):
         t += 1
 
     return res
+
+def main():
+    s, i = zip(*gendataSIS(1000, 5, 0.5, 0.9, 100))
+    pl.plot(s, hold= True)
+    pl.plot(i)
+    pl.show()
+
+
+if __name__ == '__main__':
+    main()
