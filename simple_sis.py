@@ -14,7 +14,7 @@ import random
 import pylab as pl
 
 
-def gendataSIS(s, i, gamma, beta):
+def gendataSIS(s, i, gamma, beta, max_time=2000):
     '''
     Generates randomized data based on a Simple SIR Model.
 
@@ -28,8 +28,9 @@ def gendataSIS(s, i, gamma, beta):
     n = float(s+i)
 
     res = []
+    t = 0
 
-    while i > 0:
+    while i > 0 and s < n and t < max_time:
         newly_infected = 0
         newly_susceptible = 0
 
@@ -47,5 +48,6 @@ def gendataSIS(s, i, gamma, beta):
 
         # add values at this timestep
         res.append((s, i))
+        t += 1
 
     return res
