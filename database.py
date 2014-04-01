@@ -24,13 +24,29 @@ def wheres_to_str(wheres):
     return 'WHERE ' + ' AND '.join(('{0}=%({0})s'.format(k) for k in wheres.keys()))
 
 
-def select(table, columns=None, wheres=None, distinct=False):
+def order_to_str(order):
+    if not order:
+        return ''
+    return ' ORDER BY {0}'.format(', '.join(order))
+
+
+def select(table, columns=None, wheres=None, distinct=False, order=None):
     cur = conn.cursor()
     dist_str = ''
     if distinct:
         dist_str = ' DISTINCT'
     cur.execute(
-        '''SELECT{0} {1} FROM {2} {3};'''.format(
-                dist_str, columns_to_str(columns), table, wheres_to_str(wheres)),
+        '''SELECT{0} {1} FROM {2} {3}{4};'''.format(
+            dist_str,
+            columns_to_str(columns),
+            table,
+            wheres_to_str(wheres),
+            order_to_str(order)),
         wheres)
+    print '''SELECT{0} {1} FROM {2} {3}{4};'''.format(
+            dist_str,
+            columns_to_str(columns),
+            table,
+            wheres_to_str(wheres),
+            order_to_str(order))
     return cur.fetchall()

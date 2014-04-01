@@ -19,6 +19,21 @@ def windowsize(data):
     '''Will eventually calculate window size based on data length'''
     return data
 
+def sumstatextract(data):
+    a= max(data)
+    b = None
+    c = None
+    for t in xrange(len(data)):
+        if data[t] > a/2.0:
+            b = t
+            break
+    for t in xrange(len(data) -1, -1, -1):
+        if data[t] > a/2.0:
+            c = t
+            break
+    return a,b, c
+
+
 def main():
     connect(sys.argv[1])
 
@@ -27,7 +42,8 @@ def main():
     pl.plot(data, hold= True)
 
     smoothed = np.convolve(data, np.ones(10)/10)
-    print smoothed
+    print sumstatextract(smoothed)
+    #print smoothed
     pl.plot(smoothed)
 
     prepare_figure()
