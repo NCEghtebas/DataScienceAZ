@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 mkdir -p factbook
 cd factbook
@@ -23,6 +23,11 @@ do
   fi
 
   rm fields.zip
+
+  for plain in $year/print_*.html
+  do
+    mv $plain "$year/${plain#*/print_}"
+  done
 
   for html in $year/*.html
   do
