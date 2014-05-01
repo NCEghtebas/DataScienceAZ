@@ -1,2 +1,9 @@
 *.pyc
 factbook
+SIR_15runs.png
+SIS_10runs.png
+SIS_5runs.png
+country_list.py
+findparameters.py
+retrieve .py
+stocastic_sis.py
