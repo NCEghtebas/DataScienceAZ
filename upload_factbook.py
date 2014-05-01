@@ -1,3 +1,10 @@
+'''
+Script to upload CIA wolrd fact book data into database
+
+Alethea and Chloe
+4/30/14
+
+'''
 import os
 import sys
 import re
@@ -121,35 +128,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-'''  
-2001 - GDP
-2002- pop growth rate
-2003- real gdp
-2010- age strucure
-2011- coordinates
-2012- GDP compisition by sector (i.e. percentge agriculture, industry, or services)
-2018- sex ratio
-2021- natural hazards
-2032- enviornmental "current issues"
-2034- military expenditure
-2038- electricity production (kwh)
-2042- consumption (kwh)
-2046- population below poverty line
-2048- labor force by ocupation
-2054- birth rates
-2056- budget
-2059- climate
-2060- coastline1
-2061- import partners
-2066 - death rate
-2075- ethnic groups
-2078- exports
-2079- debt
-2085- roadways
-2086- illicit drugs
-2093- waterways
-2102- life expectancy
-2112- net migration rate
-'''
