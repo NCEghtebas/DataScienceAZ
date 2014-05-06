@@ -22,11 +22,12 @@ def getcountrylist():
 def finddata(country, fn):
     with open(fn, 'r') as f:
         for line in f:
+            line = ' '.join(line.split())
             if country in line:
                 return ' '.join(line.split())
 
 def retreivefn(statnum):
-    for year in os.listdir('factbook'): 
+    for year in sorted(os.listdir('factbook')): 
         fn = os.path.join('factbook', year, '{0}.txt'.format(statnum))
         if os.path.exists(fn):
             yield (int(year), fn)
@@ -39,6 +40,12 @@ def retreivedata(country, statnum):
 
 def raw(data):
     return data
+
+def number(data):
+    m = re.search(r'([0-9]{0,3}(,[0-9]{3,3}))(\s|$)', data)
+    if m is None:
+        return None
+    return int(''.join(m.group(1).split(',')))
 
 def currency(data):
     conversion = {'million': 1e6, 'billion': 1e9, 'trillion': 1e12}
@@ -75,18 +82,19 @@ def percentageGroup(*keywords):
 Stat = namedtuple('Stat', ['func', 'name', 'columns', 'count'])
 
 stats= {
-    2001: Stat(currency, 'gdp', 'gdp MONEY', 1),
-    2002: Stat(percentage, 'pop_growth_rate', 'rate REAL', 1),
-    2003: Stat(percentage, 'real_gdp', 'gdp MONEY', 1),
+    2001: Stat(currency, 'gdp', 'gdp BIGINT', 1),
+    2119: Stat(number, 'population', 'population BIGINT', 1),
+    2002: Stat(percentage, 'population_growth_rate', 'rate REAL', 1),
+    2003: Stat(percentage, 'gdp_growth_rate', 'rate REAL', 1),
     2021: Stat(raw, 'natural_hazards', 'hazards TEXT', 1),
     2032: Stat(raw, 'current_environmental_issues', 'enviornmental TEXT', 1),
     2034: Stat(percentage, 'militray_expenditure', 'military REAL', 1), 
     2046: Stat(percentage, 'poverty_population', 'poverty REAL', 1),
-     2048: Stat(percentageGroup('agriculture', 'services', 'industry'),
-                'labor_force',
-                'agriculture REAL, services REAL, industry REAL',
-                3),
-    2056: Stat(currency, 'budget' ,'budget MONEY', 1),
+    2048: Stat(percentageGroup('agriculture', 'services', 'industry'),
+               'labor_force',
+               'agriculture REAL, services REAL, industry REAL',
+               3),
+    2056: Stat(currency, 'budget' ,'budget BIGINT', 1),
     2059: Stat(raw, 'climate_description', 'climate TEXT', 1), 
     2066: Stat(rate, 'death_rate', 'rate REAL', 1)}
 
@@ -122,7 +130,7 @@ def main():
                 if datum[1] is not None:
                     value = stat.func(datum[1])
                     if value is not None:
-                        print datum[0], value
+                        print stat.name, country, datum[0], value
                         insert_row(conn, datum[0], country, stat, value)
     conn.commit()
 
