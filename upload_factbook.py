@@ -19,12 +19,15 @@ def getcountrylist():
         countrylist.append(country[0].decode('utf8'))
     return countrylist
 
-def finddata(country, fn):
+def finddata(country, func, fn):
     with open(fn, 'r') as f:
         for line in f:
             line = ' '.join(line.split())
             if country in line:
-                return ' '.join(line.split())
+               value = func(line)
+               if value is not None:
+                   return value
+    return None
 
 def retreivefn(statnum):
     for year in sorted(os.listdir('factbook')): 
@@ -33,16 +36,18 @@ def retreivefn(statnum):
             yield (int(year), fn)
 
 
-def retreivedata(country, statnum):
+def retreivedata(country, stat, statnum):
     for year, fn in retreivefn(statnum):
-        yield (year, finddata(country, fn))
+        data = finddata(country, stat.func, fn)
+        if data is not None:
+            yield (year, data)
 
 
 def raw(data):
     return data
 
-def number(data):
-    m = re.search(r'([0-9]{0,3}(,[0-9]{3,3}))(\s|$)', data)
+def population(data):
+    m = re.search(r'([0-9,]+)\s+\(.*est\.\)', data)
     if m is None:
         return None
     return int(''.join(m.group(1).split(',')))
@@ -83,7 +88,7 @@ Stat = namedtuple('Stat', ['func', 'name', 'columns', 'count'])
 
 stats= {
     2001: Stat(currency, 'gdp', 'gdp BIGINT', 1),
-    2119: Stat(number, 'population', 'population BIGINT', 1),
+    2119: Stat(population, 'population', 'population BIGINT', 1),
     2002: Stat(percentage, 'population_growth_rate', 'rate REAL', 1),
     2003: Stat(percentage, 'gdp_growth_rate', 'rate REAL', 1),
     2021: Stat(raw, 'natural_hazards', 'hazards TEXT', 1),
@@ -126,12 +131,9 @@ def main():
     create_tables(conn)
     for country in getcountrylist():
         for statnum, stat in stats.items():
-            for datum in retreivedata(country, statnum):
-                if datum[1] is not None:
-                    value = stat.func(datum[1])
-                    if value is not None:
-                        print stat.name, country, datum[0], value
-                        insert_row(conn, datum[0], country, stat, value)
+            for datum in retreivedata(country, stat, statnum):
+                print stat.name, country, datum[0], datum[1]
+                insert_row(conn, datum[0], country, stat, datum[1])
     conn.commit()
 
 if __name__ == '__main__':
